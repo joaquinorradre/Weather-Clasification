@@ -4,24 +4,41 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from tqdm import tqdm
+import pickle
+import os
 
 from weather_classification.weather_dataset import WeatherDataset
-from weather_classification.models.mlp import MLPClassifier
+from weather_classification.modeling.mlp import MLPClassifier
+from weather_classification.modeling.modern_lenet import LeNetModern
 
-def train_model(model, train_dir, val_dir, input_dim, num_classes=11, 
+
+def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11, 
                 batch_size=32, epochs=20, lr=1e-3, device="cuda"):
     
-    # Data transforms (resize + flatten for MLP)
-    if model == MLPClassifier:
+    model_name = model_class.__name__
+
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+    metrics_dir = os.path.join(PROJECT_ROOT, "reports", "metrics")
+    models_dir = os.path.join(PROJECT_ROOT, "models")
+
+    os.makedirs(metrics_dir, exist_ok=True)
+    os.makedirs(models_dir, exist_ok=True)
+
+    metrics_path = os.path.join(metrics_dir, f"metrics_{model_name}.pkl")
+    model_path = os.path.join(models_dir, f"best_model_{model_name}.pth")
+
+    # Data transforms (resize + flatten para MLP)
+    if model_class == MLPClassifier:
         transform = transforms.Compose([
-            transforms.Resize((64, 64)),   # Resize images
-            transforms.ToTensor(),         # Convert to tensor
-            transforms.Lambda(lambda x: x.view(-1))  # Flatten for MLP
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: x.view(-1))  # Flatten para MLP
         ])
     else:
         transform = transforms.Compose([
-            transforms.Resize((64, 64)),   # Resize images
-            transforms.ToTensor(),         # Convert to tensor
+            transforms.Resize((64, 64)),
+            transforms.ToTensor(),
         ])
 
     # Datasets
@@ -32,14 +49,15 @@ def train_model(model, train_dir, val_dir, input_dim, num_classes=11,
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-    # Model
-    model = model(input_dim=input_dim, num_classes=num_classes).to(device)
+    # Modelo
+    model = model_class(input_dim=input_dim, num_classes=num_classes).to(device)
 
     # Loss & Optimizer
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
 
     best_val_acc = 0.0
+    history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
 
     # Training loop
     for epoch in range(epochs):
@@ -78,6 +96,12 @@ def train_model(model, train_dir, val_dir, input_dim, num_classes=11,
         val_loss /= len(val_dataset)
         val_acc = val_corrects / len(val_dataset)
 
+        # Save metrics
+        history["train_loss"].append(epoch_loss)
+        history["train_acc"].append(epoch_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
+
         print(f"Epoch {epoch+1}/{epochs}: "
               f"Train Loss={epoch_loss:.4f}, Train Acc={epoch_acc:.4f}, "
               f"Val Loss={val_loss:.4f}, Val Acc={val_acc:.4f}")
@@ -87,6 +111,15 @@ def train_model(model, train_dir, val_dir, input_dim, num_classes=11,
             best_val_acc = val_acc
             torch.save(model.state_dict(), f"best_model_{model}.pth")
             print(f"Best model saved (val_acc={val_acc:.4f})")
+=======
+            torch.save(model.state_dict(), model_path)
+            print(f"Best model saved in {model_path} (val_acc={val_acc:.4f})")
+
+    # Save metrics to .pkl
+    with open(metrics_path, "wb") as f:
+        pickle.dump(history, f)
+>>>>>>> bd15cc7770aa71c18b28c1407ee2846532b42aeb
 
     print(f"Training complete. Best val_acc={best_val_acc:.4f}")
-    return model
+    print(f"MMetrics saved in {metrics_path}")
+    return model, history
