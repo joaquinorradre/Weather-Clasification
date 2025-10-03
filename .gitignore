@@ -1,4 +1,4 @@
 dataset/
 data/
-notebooks/experiments/best_model.pth
-weather_classification/models/__pycache__
+models/
+weather_classification/modeling/__pycache__
