@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class LeNetModern(nn.Module):
-    def __init__(self):
+    def __init__(self, input_dim, num_classes):
         super(LeNetModern, self).__init__()
 
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3)
@@ -17,7 +17,7 @@ class LeNetModern(nn.Module):
         self.dropout = nn.Dropout(p=0.4)
         self.fc2 = nn.Linear(256, 128)
 
-        self.output = nn.Linear(128, 11)
+        self.output = nn.Linear(128, num_classes)
         
     def forward(self, x):
         # x: (B, 3, 64, 64)

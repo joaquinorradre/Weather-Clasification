@@ -6,16 +6,23 @@ from torchvision import transforms
 from tqdm import tqdm
 
 from weather_classification.weather_dataset import WeatherDataset
+from weather_classification.models.mlp import MLPClassifier
 
 def train_model(model, train_dir, val_dir, input_dim, num_classes=11, 
                 batch_size=32, epochs=20, lr=1e-3, device="cuda"):
     
     # Data transforms (resize + flatten for MLP)
-    transform = transforms.Compose([
-        transforms.Resize((64, 64)),   # Resize images
-        transforms.ToTensor(),         # Convert to tensor
-        transforms.Lambda(lambda x: x.view(-1))  # Flatten for MLP
-    ])
+    if model == MLPClassifier:
+        transform = transforms.Compose([
+            transforms.Resize((64, 64)),   # Resize images
+            transforms.ToTensor(),         # Convert to tensor
+            transforms.Lambda(lambda x: x.view(-1))  # Flatten for MLP
+        ])
+    else:
+        transform = transforms.Compose([
+            transforms.Resize((64, 64)),   # Resize images
+            transforms.ToTensor(),         # Convert to tensor
+        ])
 
     # Datasets
     train_dataset = WeatherDataset(train_dir, transform=transform)
