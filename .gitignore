@@ -1,2 +1,5 @@
 dataset/
 data/
+models/
+weather_classification/modeling/__pycache__
+weather_classification/__pycache__
