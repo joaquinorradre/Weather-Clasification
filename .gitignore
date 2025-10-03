@@ -2,3 +2,4 @@ dataset/
 data/
 notebooks/experiments/best_model.pth
 weather_classification/models/__pycache__
+weather_classification/__pycache__

@@ -85,7 +85,7 @@ def train_model(model, train_dir, val_dir, input_dim, num_classes=11,
         # Save best model
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            torch.save(model.state_dict(), "best_model.pth")
+            torch.save(model.state_dict(), f"best_model_{model}.pth")
             print(f"Best model saved (val_acc={val_acc:.4f})")
 
     print(f"Training complete. Best val_acc={best_val_acc:.4f}")
