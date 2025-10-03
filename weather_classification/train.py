@@ -9,7 +9,7 @@ import os
 
 from weather_classification.weather_dataset import WeatherDataset
 from weather_classification.modeling.mlp import MLPClassifier
-from weather_classification.modeling.modern_lenet import LeNetModern
+from weather_classification.modeling.cnn import CNN_V2, CNN_V2_reg
 
 
 def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11, 
@@ -34,6 +34,11 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
             transforms.Resize((64, 64)),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: x.view(-1))  # Flatten para MLP
+        ])
+    elif (model_class == CNN_V2) or (model_class == CNN_V2_reg):
+        transform = transforms.Compose([
+            transforms.Resize((128, 128)),
+            transforms.ToTensor(),
         ])
     else:
         transform = transforms.Compose([
