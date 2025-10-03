@@ -11,7 +11,7 @@ from weather_classification.weather_dataset import WeatherDataset
 def predict(model, model_path, transform, set_path, batch_size=32):
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found at: {os.path.abspath(model_path)}")
-
+    print(set_path)
     state_dict = torch.load(model_path, map_location="cpu")
     # for k, v in state_dict.items():
     #     print(f"{k}: {v.shape}")
