@@ -9,7 +9,7 @@ import os
 
 from weather_classification.weather_dataset import WeatherDataset
 from weather_classification.modeling.mlp import MLPClassifier
-from weather_classification.modeling.cnn import CNN_V2, CNN_V2_reg
+from weather_classification.modeling.cnn import CNN_V2, CNN_V2_reg, CNN_V3
 
 
 def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11, 
@@ -38,6 +38,11 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
     elif (model_class == CNN_V2) or (model_class == CNN_V2_reg):
         transform = transforms.Compose([
             transforms.Resize((128, 128)),
+            transforms.ToTensor(),
+        ])
+    elif model_class == CNN_V3:
+        transform = transforms.Compose([
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
         ])
     else:
