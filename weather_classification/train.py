@@ -109,8 +109,6 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
         # Save best model
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            torch.save(model.state_dict(), f"best_model_{model}.pth")
-            print(f"Best model saved (val_acc={val_acc:.4f})")
             torch.save(model.state_dict(), model_path)
             print(f"Best model saved in {model_path} (val_acc={val_acc:.4f})")
 
