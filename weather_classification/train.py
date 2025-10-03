@@ -111,14 +111,12 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
             best_val_acc = val_acc
             torch.save(model.state_dict(), f"best_model_{model}.pth")
             print(f"Best model saved (val_acc={val_acc:.4f})")
-=======
             torch.save(model.state_dict(), model_path)
             print(f"Best model saved in {model_path} (val_acc={val_acc:.4f})")
 
     # Save metrics to .pkl
     with open(metrics_path, "wb") as f:
         pickle.dump(history, f)
->>>>>>> bd15cc7770aa71c18b28c1407ee2846532b42aeb
 
     print(f"Training complete. Best val_acc={best_val_acc:.4f}")
     print(f"MMetrics saved in {metrics_path}")
