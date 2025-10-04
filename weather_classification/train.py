@@ -6,10 +6,11 @@ from torchvision import transforms
 from tqdm import tqdm
 import pickle
 import os
+from collections import Counter
 
 from weather_classification.weather_dataset import WeatherDataset
 from weather_classification.modeling.mlp import MLPClassifier
-from weather_classification.modeling.cnn import CNN_V2, CNN_V2_reg, CNN_V3
+from weather_classification.modeling.cnn import CNN_V2, CNN_V2_reg, CNN_V3, CNN_V3_reg
 
 
 def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11, 
@@ -40,7 +41,7 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
             transforms.Resize((128, 128)),
             transforms.ToTensor(),
         ])
-    elif model_class == CNN_V3:
+    elif model_class == CNN_V3 or model_class == CNN_V3_reg:
         transform = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -59,11 +60,23 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
+    # Calculate weights per class
+    labels = [label for _, label in train_dataset.samples]
+    class_counts = Counter(labels)
+    num_classes = len(class_counts)
+
+    total_samples = sum(class_counts.values())
+    class_weights = [total_samples / class_counts[i] for i in range(num_classes)]
+    class_weights_tensor = torch.FloatTensor(class_weights).to(device)
+
+    print("Class counts:", class_counts)
+    print("Class weights:", class_weights_tensor)
+
     # Modelo
     model = model_class(input_dim=input_dim, num_classes=num_classes).to(device)
 
     # Loss & Optimizer
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(weight=class_weights_tensor)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=1e-5)
 
     best_val_acc = 0.0
