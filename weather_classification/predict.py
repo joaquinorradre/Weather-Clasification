@@ -12,9 +12,16 @@ def predict(model, model_path, transform, set_path, batch_size=32):
     if not os.path.isfile(model_path):
         raise FileNotFoundError(f"Model file not found at: {os.path.abspath(model_path)}")
     print(set_path)
-    state_dict = torch.load(model_path, map_location="cpu")
-    # for k, v in state_dict.items():
-    #     print(f"{k}: {v.shape}")
+
+    checkpoint = torch.load(model_path, map_location="cpu")
+    # If it's a checkpoint, extract the actual model weights
+    if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+        print("Detected checkpoint format (with optimizer/epoch info)")
+        state_dict = checkpoint["model_state_dict"]
+    else:
+        print("Detected raw state_dict format")
+        state_dict = checkpoint
+
     model.load_state_dict(state_dict)
     model.eval()
 

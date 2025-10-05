@@ -269,3 +269,75 @@ class CNN_V3_reg(nn.Module):
         x = x.view(x.size(0), -1)  # flatten
         x = self.classifier(x)
         return x
+    
+# Improved version of your existing CNN_V3
+class CNN_V3_Improved(nn.Module):
+    """
+    Direct improvement of your current CNN_V3
+    Keeps similar structure but adds:
+    - More channels
+    - Better dropout placement
+    """
+    def __init__(self, input_dim, num_classes=11):
+        super(CNN_V3_Improved, self).__init__()
+        
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 32, 3, padding=1),
+            nn.ReLU(),
+            nn.Dropout2d(0.1),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(32, 64, 3, padding=1),
+            nn.ReLU(),
+            nn.Dropout2d(0.15),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(64, 128, 5, padding=2),
+            nn.ReLU(),
+            nn.Dropout2d(0.2),
+            nn.MaxPool2d(2, 2),
+
+            nn.Conv2d(128, 256, 5, padding=2),  # 256 instead of 128
+            nn.ReLU(),
+            nn.Dropout2d(0.25),
+            nn.MaxPool2d(2, 2),
+            
+            nn.Conv2d(256, 512, 3, padding=1),  # Extra layer
+            nn.ReLU(),
+            nn.Dropout2d(0.3),
+            nn.MaxPool2d(2, 2),
+        )
+
+        # For 224x224 input
+        self.flattened_size = 512 * 7 * 7
+
+        self.classifier = nn.Sequential(
+            nn.Linear(self.flattened_size, 1024),  # Bigger
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            
+            nn.Linear(256, num_classes)
+        )
+        
+        #self._initialize_weights()
+    """
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+                nn.init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+    """
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
