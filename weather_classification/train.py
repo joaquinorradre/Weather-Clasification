@@ -24,6 +24,10 @@ def get_weighted_sampler(dataset):
     
     return sampler
 
+class FlattenTransform:
+    def __call__(self, x):
+        return x.view(-1)
+
 def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11, 
                 batch_size=32, epochs=20, lr=1e-3, device="cuda"):
     
@@ -156,6 +160,7 @@ def train_model(model_class, train_dir, val_dir, input_dim, num_classes=11,
 
 
 
+
 def train_model_improved(model_class, train_dir, val_dir, input_dim, num_classes=11, 
                 batch_size=32, epochs=20, lr=1e-3, device="cuda", 
                 use_scheduler=True, label_smoothing=0.1):
@@ -182,7 +187,7 @@ def train_model_improved(model_class, train_dir, val_dir, input_dim, num_classes
             transforms.Resize((64, 64)),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
-            transforms.Lambda(lambda x: x.view(-1))
+            FlattenTransform()   # en lugar de lambda
         ])
         val_transform = train_transform
         
@@ -276,7 +281,7 @@ def train_model_improved(model_class, train_dir, val_dir, input_dim, num_classes
     best_val_acc = 0.0
     best_val_loss = float('inf')
     patience_counter = 0
-    early_stop_patience = 7  # Stop if no improvement for 7 epochs
+    early_stop_patience = 15  # Stop if no improvement for 7 epochs
     
     history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": [], "lr": []}
 
