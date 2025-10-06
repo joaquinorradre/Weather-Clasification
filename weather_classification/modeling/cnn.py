@@ -11,6 +11,7 @@ class CNN_V1(nn.Module):
             nn.Conv2d(16, 32, 5),
             nn.ReLU(),
             nn.MaxPool2d(2, 2),
+
             nn.Conv2d(32, 64, 3),
             nn.ReLU(),
             nn.Conv2d(64, 128, 3),
@@ -51,6 +52,7 @@ class CNN_V1_reg(nn.Module):
             nn.ReLU(),
             nn.Dropout(self.p),
             nn.MaxPool2d(2, 2),
+
             nn.Conv2d(32, 64, 3),
             nn.ReLU(),
             nn.Dropout(self.p),
@@ -93,19 +95,16 @@ class CNN_V2(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, 5),
             nn.ReLU(),
-
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(64, 128, 3),
             nn.ReLU(),
             nn.Conv2d(128, 256, 5),
             nn.ReLU(),
-
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(256, 512, 3),
             nn.ReLU(),
-
             nn.MaxPool2d(3, 3)
         )
 
@@ -139,7 +138,6 @@ class CNN_V2_reg(nn.Module):
             nn.Conv2d(32, 64, 5),
             nn.ReLU(),
             nn.Dropout(self.p),
-
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(64, 128, 3),
@@ -148,7 +146,6 @@ class CNN_V2_reg(nn.Module):
             nn.Conv2d(128, 256, 5),
             nn.ReLU(),
             nn.Dropout(self.p),
-
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(256, 512, 3),
