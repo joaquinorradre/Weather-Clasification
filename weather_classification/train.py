@@ -180,6 +180,7 @@ def train_model_improved(model_class, train_dir, val_dir, input_dim, num_classes
     if model_class == MLPClassifier:
         train_transform = transforms.Compose([
             transforms.Resize((64, 64)),
+            transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: x.view(-1))
         ])
@@ -275,7 +276,7 @@ def train_model_improved(model_class, train_dir, val_dir, input_dim, num_classes
     best_val_acc = 0.0
     best_val_loss = float('inf')
     patience_counter = 0
-    early_stop_patience = 15  # Stop if no improvement for 15 epochs
+    early_stop_patience = 7  # Stop if no improvement for 7 epochs
     
     history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": [], "lr": []}
 
