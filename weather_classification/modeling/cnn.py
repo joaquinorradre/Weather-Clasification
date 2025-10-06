@@ -43,22 +43,26 @@ class CNN_V1(nn.Module):
 class CNN_V1_reg(nn.Module):
     def __init__(self, input_dim, num_classes=11):
         super(CNN_V1_reg, self).__init__()
-        self.p = 0.4
+        # Dropout probabilities
+        self.p_conv = 0.15   # Convolutional layers
+        self.p_fc = 0.4      # Fully connected layers
+
         self.features = nn.Sequential(
             nn.Conv2d(3, 16, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
+
             nn.Conv2d(16, 32, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(32, 64, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.Conv2d(64, 128, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2)
         )
 
@@ -70,13 +74,13 @@ class CNN_V1_reg(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(self.flattened_size, 512),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(128, num_classes)
         )
         
@@ -130,27 +134,29 @@ class CNN_V2(nn.Module):
 class CNN_V2_reg(nn.Module):
     def __init__(self, input_dim, num_classes=11):
         super(CNN_V2_reg, self).__init__()
-        self.p = 0.4
+        self.p_conv = 0.15   # Convolutional layers
+        self.p_fc = 0.4      # Fully connected layers
+
         self.features = nn.Sequential(
             nn.Conv2d(3, 32, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.Conv2d(32, 64, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(64, 128, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.Conv2d(128, 256, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(256, 512, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
 
             nn.MaxPool2d(3, 3)
         )
@@ -161,13 +167,13 @@ class CNN_V2_reg(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(self.flattened_size, 512),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(128, num_classes)
         )
         
@@ -221,26 +227,28 @@ class CNN_V3(nn.Module):
 class CNN_V3_reg(nn.Module):
     def __init__(self, input_dim, num_classes=11):
         super(CNN_V3_reg, self).__init__()
-        self.p = 0.35
+        self.p_conv = 0.15   # Convolutional layers
+        self.p_fc = 0.4      # Fully connected layers
+
         self.features = nn.Sequential(
             nn.Conv2d(3, 16, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(16, 32, 3),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(32, 64, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
 
             nn.Conv2d(64, 128, 5),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_conv),
             nn.MaxPool2d(2, 2),
         )
 
@@ -251,13 +259,13 @@ class CNN_V3_reg(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(self.flattened_size, 512),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Dropout(self.p),
+            nn.Dropout(self.p_fc),
             nn.Linear(128, num_classes)
         )
         
